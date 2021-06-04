@@ -23,10 +23,149 @@ library(ggmap)
 
 ## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+library(readr)
+Traffic_Crashes <- read_csv("~/Desktop/Traffic_Crashes_-_Crashes (1).csv")
+View(Traffic_Crashes)
+unique(Traffic_Crashes$MOST_SEVERE_INJURY)
 ```
 
+```{r}
+unique(Traffic_Crashes$INJURIES_FATAL)
+keep <- c("CRASH_DATE","POSTED_SPEED_LIMIT","ROADWAY_SURFACE_COND","STREET_NO","BEAT_OF_OCCURRENCE","MOST_SEVERE_INJURY","CRASH_MONTH","LATITUDE","LONGITUDE","LOCATION")
+crashes <- Traffic_Crashes[keep]
+crashes$CRASH_DATE <- format(as.POSIXct(strptime(crashes$CRASH_DATE,"%d/%m/%Y %H:%M",tz="")) ,format = "%d/%m/%Y")
+crashes$CRASH_DATE <- as.Date(crashes$CRASH_DATE, "%m/%d/%Y")
+crashes$Year <- substring(crashes$CRASH_DATE,1,4)
+#unique(crashes$BEAT_OF_OCCURRENCE)
+crashes$CRASH_MONTH <- month.name[crashes$CRASH_MONTH]
+```
+
+```{r}
+library(dplyr)
+library(tidyverse)
+x<- crashes %>% 
+  group_by(CRASH_DATE) %>%
+  tally()
+x1 <- crashes %>% 
+  group_by(Year, CRASH_MONTH) %>%
+  tally()
+x$Year <- substring(x$CRASH_DATE,1,4)
+sum(is.na(crashes$CRASH_DATE))
+x<- x %>% drop_na()
+x1$month_fac <- factor(x1$CRASH_MONTH, levels = month.name)
+x1 <- x1 %>% drop_na()
+```
+```{r}
+x1<- x1 %>%
+  rename(Month = month_fac, 
+         INJURIES_FATAL = n)
+
+levels = factor(c("Jan","Feb","Mar", "Apr","Jun","July","Aug","Sep","Oct","Nov","Dec"))
+x1$Mon <- factor(x1$Month, levels = levels)
+
+x1$Month <- recode(x1$Month, January = "Jan", February = "Feb", March = "Mar", April = "Apr", May = "May", June = "June", July = "July", August = "Aug", September = "Sept", October = "Oct", November = "Nov", December = "Dec")
+```
+
+```{r}
+fat <- read_csv("~/Desktop/Fatalities.csv")
+```
+
+```{r}
+keep <- c("CRASH_DATE","POSTED_SPEED_LIMIT","MOST_SEVERE_INJURY","INJURIES_TOTAL","INJURIES_FATAL","LATITUDE","LONGITUDE","LOCATION")
+data_fata <- Fatalities[keep]
+data_fata$CRASH_DATE <- format(as.POSIXct(strptime(Fatalities$CRASH_DATE,"%d/%m/%Y %H:%M",tz="")) ,format = "%d/%m/%Y")
+data_fata$CRASH_DATE <- as.Date(Fatalities$CRASH_DATE, "%m/%d/%Y")
+data_fata$Year <- substring(Fatalities$CRASH_DATE,1,4)
+#unique(crashes$BEAT_OF_OCCURRENCE)
+data_fata$CRASH_MONTH <- month.name[Fatalities$CRASH_MONTH]
+fat$Date <- substring(fat$CRASH_DATE, 1,10)
+fat$Date <- as.Date(fat$Date, format = "%m/%d/%Y")
+fat$Year <- substring(fat$Date,1,4)
+keep <- c("CRASH_DATE","POSTED_SPEED_LIMIT","MOST_SEVERE_INJURY","INJURIES_TOTAL","INJURIES_FATAL","LATITUDE","LONGITUDE","LOCATION","Date","Year")
+fat <- fat[keep]
+fat$Month <- as.numeric(substring(fat$Date,6,7))
+fat$month_name <- factor(fat$Month, levels = month.name)
+levels = factor(c("Jan","Feb","Mar", "Apr","Jun","July","Aug","Sep","Oct","Nov","Dec"))
+fat$month <- month.name[fat$Month]
+k <- c("month","Year","INJURIES_FATAL")
+tbl <- fat[k]
+t <- tbl %>% group_by(Year,month) %>% mutate(Total_fatalities = sum(INJURIES_FATAL))
+t$MONTH <- factor(t$month, levels = month.name)
+t$MONTH <- factor(t$month, levels = month.name)
+t$MONTH <- recode(t$MONTH, January = "Jan", February = "Feb", March = "Mar", April = "Apr", May = "May", June = "June", July = "July", August = "Aug", September = "Sept", October = "Oct", November = "Nov", December = "Dec")
+yrs <- c("2018","2019","2020","2021")
+t <- filter(t, Year %in% yrs)
+```
+
+```{r}
+ggplot(data = t , aes(x = MONTH, y = Total_fatalities, group = Year, colour = Year))+ xlab("Month") + ylab("Total Fatalities") +
+  geom_line(size = 0.75) + ggtitle("Total no. of road crash fatalities") + theme(plot.title = element_text(hjust = 0.5))
+
+```
+```{r}
+install.packages("osmdata")
+library(osmdata)
+town <- 'Chicago'
+location <- town %>% opq
+```
+
+```{r}
+main_st <- data.frame(type = c("motorway","trunk","primary","motorway_junction","trunk_link","primary_link","motorway_link"))
+ st <- data.frame(type = available_tags('highway'))
+ st <- subset(st, !type %in% main_st$type)
+ path <- data.frame(type = c("footway","path","steps","cycleway"))
+ st <- subset(st, !type %in% path$type)
+ st <- as.character(st$type)
+ main_st <- as.character(main_st$type)
+ path <- as.character(path$type)
+
+#query OSM
+ main_streets <- location %>%
+   add_osm_feature(key = "highway", 
+                   value = main_st) %>%
+   osmdata_sf()
+ streets <- location %>%
+   add_osm_feature(key = "highway", 
+                   value = st) %>%
+   osmdata_sf()
+```
+
+```{r}
+library(ggmap)
+library(googleway)
+library(RColorBrewer)
+library(ggplot2)
+google_key <- "AIzaSyAZt42YPlT3gYFMOeHw4bR1fLAAoxszNic"
+register_google(key = google_key)
+chicago <- get_stamenmap(bbox = c(left = -88.0225, bottom = 41.5949, 
+                                  right = -87.2713, top = 42.0677), 
+                         zoom = 10) %>% ggmap()
+chicago 
+fat_2020 <- filter(fat, Year == "2020")
+chicago +
+stat_density_2d(
+data = fat_2020,
+aes(
+  x = LONGITUDE,
+  y = LATITUDE,
+  fill = stat(level)
+),
+alpha = .2,
+bins = 10,
+geom = "polygon"
+) +
+scale_fill_gradientn(colors = brewer.pal(7, "YlOrRd"))
+
+```
+```{r}
+fat <- fat[!is.na(fat$LOCATION),]
+fat$Neighborhood <- factor(fat$LOCATION)
+chicago +   geom_point(aes(x = LONGITUDE, y = LATITUDE), colour = 'blue', data = fat, alpha=0.25, size = 0.75) + 
+  theme(legend.position="none") 
+```
+```{r}
+chicago_region = osmdata::getbb("Chicago", format_out = "sf_polygon")
+chicago_region
+```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
