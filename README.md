@@ -2,7 +2,7 @@
 
 #### RESEARCH QUESTION 
 
-Severe traffic crashes cause serious death and injuries which negatively impacts public health, economic development and equity. The COVID 19 pandemic has transformed mobility in cities and the its impact on Chicago has been interesting in terms of total number of fatalities for the year 2020. Through this project, I have used various visualizing techniques to show the change in traffic crashes and fatalities over the past few years particularly concentrating on the year 2020. The project also tries to identify road networks that can be considered as 'hot spots' for road traffic accidents and targeted interventions can be made to brimg behavioral changes in road users. 
+Severe traffic crashes cause serious death and injuries which negatively impacts public health, economic development and equity. The COVID 19 pandemic has transformed mobility in cities and the its impact on Chicago has been interesting in terms of total number of fatalities for the year 2020. Through this project, I have used various visualizing techniques to show the change in traffic crashes and fatalities over the past few years particularly concentrating on the year 2020. The project also tries to identify road networks that can be considered as 'hot spots' for road traffic accidents and targeted interventions can be made to bring behavioral changes in road users. 
 
 #### GOALS
 1. To visualize the change in Road traffic crashes and fatalities in the past 4 years and identify the underlying causes for the same. 
