@@ -38,8 +38,53 @@ TIME SERIES PLOT : Road Crash Fatalities for the years 2018- 2021
 <p align="center">
 <img width="769" alt="Screen Shot 2021-06-05 at 10 20 37 PM" src="https://user-images.githubusercontent.com/63677816/120911351-80769000-c64c-11eb-95ec-338d32d27f9d.png">
 
-<p align="center"> 
  
+<p align="center"> 
+ HOT SPOTS : Road Crashes 2020
+  
+<p align="center"> 
+  <img width="563" alt="Screen Shot 2021-06-05 at 10 32 47 PM" src="https://user-images.githubusercontent.com/63677816/120911850-1233cc80-c650-11eb-9104-bd61d5501e60.png">
 
-Dights
-Limitations, Future Work, Conclusion
+<p align="center"> 
+  LOCATION : FATAL CRASHES
+  
+<p align="center"> 
+  <img width="538" alt="Screen Shot 2021-06-05 at 10 49 55 PM" src="https://user-images.githubusercontent.com/63677816/120911929-b3bb1e00-c650-11eb-8d4f-1a1e118f7f3d.png">
+  
+  <p align="center"> 
+  CRASHES AGGREGATED TO ROAD NETWORKS 
+  
+  <p align="center"> 
+    <img width="505" alt="Screen Shot 2021-06-05 at 10 54 55 PM" src="https://user-images.githubusercontent.com/63677816/120911978-1ad8d280-c651-11eb-9d02-727e224c5643.png">
+
+ <p align="center"> 
+  SPEED CAMERA LOCATIONS: 
+  
+  <p align="center"> 
+      <img width="549" alt="Screen Shot 2021-06-05 at 10 57 04 PM" src="https://user-images.githubusercontent.com/63677816/120912042-93d82a00-c651-11eb-99d0-9bc7acb66231.png">
+
+<p align="center"> 
+  STREET NETWORKS WITH MAXIMUM CRASHES : Results Queried From PostgreSQL
+  
+<p align="center"> 
+  <img width="547" alt="Screen Shot 2021-06-05 at 11 05 04 PM" src="https://user-images.githubusercontent.com/63677816/120912152-7d7e9e00-c652-11eb-9708-906f19b28edc.png">
+
+  
+#### DISCUSSION :
+  1. We can see that there is a jump in Road Crash fatalities for the year 2020 which are significantly higher compared to other years especially for the month July but we also see immediate kinks for the subsequent months. 
+  2. The top 5 street networks that have the maximum crashes are the follwing street no. 1600, 7900, 800, 200, 100. 
+  3. Although the speed cameras can reduce police enforcment and possible incidents of racial profiling, it has not been very well received with Chicago. Speed Cameras have worked really well in France and have brought about behavioural changes in motorists given how efficiently they have been placed across road intersections where there are threats to vulnerable road users such as pedestrians. One of the reasons that it was not taken so well in many of the cities in United States is because it was seen as revenue raising gimmick by the government. 
+Speed Cameras if placed strategically and equitably have the possibility to reduce serious and fatal crashes (more on that later), while reducing the potential for racially-biased traffic enforcement by police officers.
+ Currently the fine is $35 for travelling 6-10 MPH over the applicable speed limit within a Children’s Safety Zone.  The fine is $100 if the recorded speed of the vehicle is 11 or more MPH over the applicable speed limit. From an economic standpoint and something I learnt in the class : Health Impacts of Transportation reducing the dollar price of fines but increasing the number of tickets can actually bring significant behavior changes in motorists. 
+
+#### LIMITATIONS:
+I had very ambitious plans for this project but I ended up spending ample of time looking for relevant data sources and working with street networks and aggregations. I wasn't able to implement some of the models taught in class that I inteded to because of the data and format concerns. I was interested in showing statiscally significant clustering patterns in traffic crashes. 
+  
+#### CONCLUSION : 
+Road accidents have been on the rise since the rapid motorization of cities and decreased reliance on public transit compared to individualized transport modes especially in American cities. There is a need to develop and implement policies that de-incentivizes or increases the costs of risk-taking behavior among road users through installation of speed cameras and other enforcement measures. There is merit in also understanding where these accidents take place frequently so strategic measures can be taken to reduce them.
+We cannot simply advocate for modal shifts from individualized modes to active travel, public transit without understanding the exposure these modes impose on each other. In a transport environment where we have heavily invested in muti-lane roads to reduce congestion and enabled cars to drive at high speeds, we have to think about the risk they impose on vulnerable road users such as pedestrians and cyclists whose numbers increased during the pandemic. 
+  
+#### SCOPE FOR FUTURE WORK : I am interested in actually looking at the interactions in terms of crashes for these modes, for ex how many of these fatalities were caused by a collision between a car and a pedestrian or a cyclist. Having this data along with the spatial attribute can help us identify junctions that are the most dangerous. 
+  
+
+  
