@@ -84,7 +84,8 @@ I had very ambitious plans for this project but I ended up spending ample of tim
 Road accidents have been on the rise since the rapid motorization of cities and decreased reliance on public transit compared to individualized transport modes especially in American cities. There is a need to develop and implement policies that de-incentivizes or increases the costs of risk-taking behavior among road users through installation of speed cameras and other enforcement measures. There is merit in also understanding where these accidents take place frequently so strategic measures can be taken to reduce them.
 We cannot simply advocate for modal shifts from individualized modes to active travel, public transit without understanding the exposure these modes impose on each other. In a transport environment where we have heavily invested in muti-lane roads to reduce congestion and enabled cars to drive at high speeds, we have to think about the risk they impose on vulnerable road users such as pedestrians and cyclists whose numbers increased during the pandemic. 
   
-#### SCOPE FOR FUTURE WORK : I am interested in actually looking at the interactions in terms of crashes for these modes, for ex how many of these fatalities were caused by a collision between a car and a pedestrian or a cyclist. Having this data along with the spatial attribute can help us identify junctions that are the most dangerous. 
+#### SCOPE FOR FUTURE WORK :
+  I am interested in actually looking at the interactions in terms of crashes for these modes, for ex how many of these fatalities were caused by a collision between a car and a pedestrian or a cyclist. Having this data along with the spatial attribute can help us identify junctions that are the most dangerous. 
   
 
   
