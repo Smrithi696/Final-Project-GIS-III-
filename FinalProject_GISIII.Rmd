@@ -26,14 +26,13 @@ library(ggmap)
 ```{r}
 library(readr)
 Traffic_Crashes <- read_csv("~/Desktop/Traffic_Crashes_-_Crashes (1).csv")
-View(Traffic_Crashes)
-unique(Traffic_Crashes$MOST_SEVERE_INJURY)
+unique(Traffic_Crashes$INJURIES_FATAL)
 ```
 
 ```{r}
-unique(Traffic_Crashes$INJURIES_FATAL)
 keep <- c("CRASH_DATE","POSTED_SPEED_LIMIT","ROADWAY_SURFACE_COND","STREET_NO","BEAT_OF_OCCURRENCE","MOST_SEVERE_INJURY","CRASH_MONTH","LATITUDE","LONGITUDE","LOCATION")
 crashes <- Traffic_Crashes[keep]
+crashes <- crashes[!is.na(crashes$LOCATION),]
 crashes$CRASH_DATE <- format(as.POSIXct(strptime(crashes$CRASH_DATE,"%d/%m/%Y %H:%M",tz="")) ,format = "%d/%m/%Y")
 crashes$CRASH_DATE <- as.Date(crashes$CRASH_DATE, "%m/%d/%Y")
 crashes$Year <- substring(crashes$CRASH_DATE,1,4)
@@ -99,8 +98,18 @@ t <- filter(t, Year %in% yrs)
 ```
 
 ```{r}
+crashes <- Traffic_Crashes[keep]
+crashes$Date <- substring(crashes$CRASH_DATE, 1,10)
+crashes$Date <- as.Date(crashes$Date, format = "%m/%d/%Y")
+crashes$Year <- substring(crashes$Date,1,4)
+crashes_2020 <- filter(crashes, crashes$Year == "2020")
+crashes_2020 <- as.data.frame(crashes_2020)
+write_csv(crashes_2020,'crashes_2020.csv')
+```
+
+```{r}
 ggplot(data = t , aes(x = MONTH, y = Total_fatalities, group = Year, colour = Year))+ xlab("Month") + ylab("Total Fatalities") +
-  geom_line(size = 0.75) + ggtitle("Total no. of road crash fatalities") + theme(plot.title = element_text(hjust = 0.5))
+  geom_line(size = 0.75) + ggtitle("Total : Road Crash Fatalities") + theme(plot.title = element_text(hjust = 0.5))
 
 ```
 ```{r}
@@ -145,27 +154,97 @@ chicago
 fat_2020 <- filter(fat, Year == "2020")
 chicago +
 stat_density_2d(
-data = fat_2020,
+data = crashes_2020,
 aes(
   x = LONGITUDE,
   y = LATITUDE,
   fill = stat(level)
 ),
 alpha = .2,
-bins = 10,
+bins = 25,
 geom = "polygon"
 ) +
-scale_fill_gradientn(colors = brewer.pal(7, "YlOrRd"))
+scale_fill_gradientn(colors = brewer.pal(7, "YlOrRd")) + ggtitle("Road Crashes : Hotspots")
 
 ```
 ```{r}
 fat <- fat[!is.na(fat$LOCATION),]
 fat$Neighborhood <- factor(fat$LOCATION)
-chicago +   geom_point(aes(x = LONGITUDE, y = LATITUDE), colour = 'blue', data = fat, alpha=0.25, size = 0.75) + 
-  theme(legend.position="none") 
+chicago +   geom_point(aes(x = LONGITUDE, y = LATITUDE), colour = 'blue', data = fat_2020, alpha=0.25, size = 1) + 
+  theme(legend.position="none") + ggtitle("Fatalities in the year 2020 ")
 ```
 ```{r}
-chicago_region = osmdata::getbb("Chicago", format_out = "sf_polygon")
-chicago_region
+crashes_sf <- st_as_sf(crashes, coords = c("LONGITUDE","LATITUDE"))
+crashes_sf <- st_set_crs(crashes_sf,4326)
+
+crashes_sf_2020 <- st_as_sf(crashes_2020, coords = c("LONGITUDE","LATITUDE"))
+crashes_sf_2020 <- st_set_crs(crashes_sf_2020,4326)
 ```
+
+```{r}
+Roads <- read_sf("~/Desktop/Major_Streets/Major_Streets.shp")
+Roads <- st_simplify(Roads, 1000)
+
+#Plot these (may take a few seconds)
+plot(Roads$geometry)
+crashes_sf_2020 <- st_transform(crashes_sf_2020,st_crs(Roads)$proj4string)
+
+```
+
+```{r}
+Road_nodes_sf<-Roads %>% group_by(OBJECTID) %>%  st_cast("POINT")
+
+Road_nodes_df<-data.frame(st_coordinates(Road_nodes_sf), Road_nodes_sf$OBJECTID)
+names(Road_nodes_df)<- c("X", "Y", "ID")
+Road_nodes_df$Seg<- 1:nrow(Road_nodes_df)
+
+```
+
+```{r}
+install.packages("RANN")
+library(RANN)
+closest <- data.frame(nn2(st_coordinates(crashes_sf_2020), Road_nodes_df[,1:2], k = 1, searchtype = "radius", radius = 1000))
+
+Accident_Dist<-merge(closest,Road_nodes_df, by.x="nn.idx", by.y="Seg")
+
+#Create a count column and then sum to give total accidents per road node
+
+Accident_Dist$Count<-1
+
+Segsums<- aggregate(Accident_Dist$Count, by=list(Accident_Dist$ID), FUN="sum")
+
+names(Segsums)<- c("ID", "Sum")
+
+#Merge this back to the Road nodes
+
+final<- merge(Road_nodes_df,Segsums, by="ID", all.x=T)
+
+final[is.na(final)] <- 0.1
+
+```
+
+
+```{r}
+ggplot(final, aes(X,Y,group=ID, order=Seg,size=Sum)) +
+  geom_path() +
+  scale_size(range=c(0.2,3)) +
+  coord_equal()
+  theme(axis.text = element_blank(),         
+        axis.title = element_blank(),         
+        axis.ticks = element_blank(),         
+        axis.line = element_blank())
+```
+```{r}
+library(tmap)
+Speed_Camera_Locations <- read_csv("~/Desktop/Speed_Camera_Locations.csv")
+View(Speed_Camera_Locations)
+cameras <- as.data.frame(Speed_Camera_Locations)
+cameras <- st_as_sf(Speed_Camera_Locations, coords = c("LONGITUDE","LATITUDE"))
+chicago + geom_point(data = cameras, aes(x = LONGITUDE, y = LATITUDE), size = 1, colour = "red")+ ggtitle("Speed Camera Locations in Chicago")
+```
+```{r}
+chicago + geom_point(data = crashes_top, aes(x = longitude, y = latitude), size = 1, colour = "red")+ ggtitle("Top Five Street Networks with the highest number of Crashes")
+```
+
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
