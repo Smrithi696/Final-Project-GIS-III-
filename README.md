@@ -26,15 +26,20 @@ The year of 2020 turned out to be quite interesting in terms of Road safety stat
 1. Trends in Traffic Fatalities : Time series plot of fatal injuries 
 2. Density of accidents in Chicago : 
    Fatalities : Creating hot spots using Open Street Maps (OSM) for Chicago | Plotting crash locations 
-   Number of Crashes for the year  : Aggregating crashes to nearest road networks (I could've done better with this by showing multiple bin sizes but was unable    to) 
+   Number of Crashes for the year  : Aggregating crashes to nearest road networks (I could've done better with this by showing multiple bin sizes but was      unable  to) 
  3. Buffer Analysis : Coverage for speed cameras (Literature review to get an idea about their efficacy) 
  4. Identifying the top 5 road networks and their location that have the maximum number of crashes : Querying Crashes_2020 data using PostgresSQL
  
    
 #### RESULTS: 
+<p align="center"> 
+TIME SERIES PLOT : Road Crash Fatalities for the years 2018- 2021
+  
+<p align="center">
+<img width="769" alt="Screen Shot 2021-06-05 at 10 20 37 PM" src="https://user-images.githubusercontent.com/63677816/120911351-80769000-c64c-11eb-95ec-338d32d27f9d.png">
 
-**TIME SERIES PLOT : Road Crash Fatalities for the years 2018- 2021**
+<p align="center"> 
+ 
 
-
-Discussion of Results/Findings/Main Highlights
+Dights
 Limitations, Future Work, Conclusion
